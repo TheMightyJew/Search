@@ -20,7 +20,6 @@ public class Main {
         int seconds = 5;
         int pancakes = 8;
         boolean heuristics = true;
-
         testAll(seconds,pancakes, heuristics);
     }
 
