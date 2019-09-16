@@ -1,10 +1,17 @@
-import Objects.*;
-import Objects.Problems.*;
-import Objects.Problems.Puncake.*;
-import Searchers.*;
-import Searchers.BestFirstSearch.*;
-import Searchers.BiDirectionalSearch.*;
-import Searchers.DepthFirstSearch.*;
+import Objects.Failure;
+import Objects.Problem;
+import Objects.Problems.Puncake.PancakesState;
+import Objects.Problems.Result;
+import Objects.Solution;
+import Searchers.BestFirstSearch.Astar;
+import Searchers.BestFirstSearch.BreadthFirstSearch;
+import Searchers.BestFirstSearch.Dijkstra;
+import Searchers.BestFirstSearch.PureHeuristicSearch;
+import Searchers.BiDirectionalSearch.FractionalMeetInTheMiddle;
+import Searchers.BiDirectionalSearch.MeetInTheMiddle;
+import Searchers.DepthFirstSearch.IterativeDeepeningAstar;
+import Searchers.DepthFirstSearch.IterativeDeepeningDepthFirstSearch;
+import Searchers.Searcher;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

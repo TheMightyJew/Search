@@ -29,4 +29,11 @@ public class Problem {
         return cheapestMove;
     }
 
+    public Problem[] splitProblemToBiDirectional(State midState){
+        Problem[] twoProblems = new Problem[2];
+        twoProblems[0] = new Problem(this.startState,midState,this.cheapestMove);
+        twoProblems[1] = new Problem(this.goalState,midState,this.cheapestMove);
+        return twoProblems;
+    }
+
 }

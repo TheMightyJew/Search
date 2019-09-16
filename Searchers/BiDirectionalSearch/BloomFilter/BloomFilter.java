@@ -10,6 +10,9 @@ public class BloomFilter implements Cloneable {
     private int k; // Number of hash functions
     private static final double LN2 = 0.6931471805599453; // ln(2)
 
+    private int bitsSize;
+    private int numberOfInsertions = 0;
+
     /**
      * Create a new bloom filter.
      * @param n Expected number of elements
@@ -19,6 +22,7 @@ public class BloomFilter implements Cloneable {
         k = (int) Math.round(LN2 * m / n);
         if (k <= 0) k = 1;
         this.hashes = new BitSet(m);
+        bitsSize = m;
         this.prng = new RandomInRange(m, k);
     }
 
@@ -36,6 +40,7 @@ public class BloomFilter implements Cloneable {
     public void add(Object o) {
         prng.init(o);
         for (RandomInRange r : prng) hashes.set(r.value);
+        numberOfInsertions++;
     }
 
     /**
@@ -56,6 +61,7 @@ public class BloomFilter implements Cloneable {
      **/
     public void clear() {
         hashes.clear();
+        numberOfInsertions = 0;
     }
 
     /**
@@ -91,6 +97,15 @@ public class BloomFilter implements Cloneable {
             throw new IllegalArgumentException("Incompatible bloom filters");
         }
         this.hashes.or(other.hashes);
+        numberOfInsertions += other.getNumberOfInsertions();
+    }
+
+    public int getNumberOfInsertions() {
+        return numberOfInsertions;
+    }
+
+    public boolean isFull(){
+        return bitsSize == numberOfInsertions;
     }
 
     private class RandomInRange
@@ -126,5 +141,10 @@ public class BloomFilter implements Cloneable {
         public void remove() {
             throw new UnsupportedOperationException();
         }
+
+    }
+
+    public static void main(String[] args) {
+        BloomFilter bl = new BloomFilter(5,10);
     }
 }

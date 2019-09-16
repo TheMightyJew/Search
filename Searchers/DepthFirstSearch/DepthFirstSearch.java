@@ -32,6 +32,7 @@ public abstract class DepthFirstSearch extends Searcher {
     }
 
     public boolean keepSearching(SearchingState searchingState){
+        // TODO: 15/09/2019 check what i wrote here and why
         return true;
     }
 

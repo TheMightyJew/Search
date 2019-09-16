@@ -21,6 +21,28 @@ public class Solution extends Result {
         buildSolutionForward(searchingState);
     }
 
+    public Solution(SearchingState forwardSearchingState, SearchingState backwardSearchingState, int time, String solver) {
+        super(time,solver);
+        this.cost = forwardSearchingState.getG()+backwardSearchingState.getG();
+        solution = new LinkedList<>();
+        buildSolutionBiDirectional(forwardSearchingState,backwardSearchingState);
+    }
+
+    public Solution(Solution forwardSolution, Solution backwardSolution, int time, String solver) {
+        super(time,solver);
+        this.cost = forwardSolution.cost+backwardSolution.cost;
+        solution = listOutOf2(forwardSolution.solution,backwardSolution.solution);
+    }
+
+    private LinkedList<State> listOutOf2(LinkedList<State> listForward, LinkedList<State> listBackward) {
+        LinkedList<State> list = new LinkedList<>(listForward);
+        for (int i=listBackward.size()-2;i>=0;i--){
+            list.add(listBackward.get(i));
+        }
+        return list;
+    }
+
+
     private void buildSolutionForward(SearchingState searchingState){
         SearchingState tmp = searchingState;
         while (tmp != null){
@@ -35,13 +57,6 @@ public class Solution extends Result {
             this.solution.addLast(tmp.getState());
             tmp = tmp.getPrevieusState();
         }
-    }
-
-    public Solution(SearchingState forwardSearchingState, SearchingState backwardSearchingState, int time, String solver) {
-        super(time,solver);
-        this.cost = forwardSearchingState.getG()+backwardSearchingState.getG();
-        solution = new LinkedList<>();
-        buildSolutionBiDirectional(forwardSearchingState,backwardSearchingState);
     }
 
     private void buildSolutionBiDirectional(SearchingState forwardSearchingState, SearchingState backwardSearchingState) {

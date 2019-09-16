@@ -9,7 +9,13 @@ public abstract class BiDirectionalSearch extends BestFirstSearch {
     double fraction;
 
     public BiDirectionalSearch(double fraction) {
-        this.fraction = fraction;
+        if(fraction<0 || fraction>1){
+            this.fraction=0.5;
+            System.out.println("fraction must be a number between 0 to 1");
+        }
+        else {
+            this.fraction = Math.max(fraction,1-fraction);
+        }
     }
 
     @Override

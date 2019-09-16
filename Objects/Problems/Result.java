@@ -18,4 +18,12 @@ public abstract class Result {
     }
 
     public abstract String toString();
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public void setSolver(String solver) {
+        this.solver = solver;
+    }
 }
