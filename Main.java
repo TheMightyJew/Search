@@ -7,6 +7,7 @@ import Searchers.BestFirstSearch.Astar;
 import Searchers.BestFirstSearch.BreadthFirstSearch;
 import Searchers.BestFirstSearch.Dijkstra;
 import Searchers.BestFirstSearch.PureHeuristicSearch;
+import Searchers.BiDirectionalSearch.BloomFilter.BloomFilterSearch;
 import Searchers.BiDirectionalSearch.FractionalMeetInTheMiddle;
 import Searchers.BiDirectionalSearch.MeetInTheMiddle;
 import Searchers.DepthFirstSearch.IterativeDeepeningAstar;
@@ -42,6 +43,7 @@ public class Main {
         searchers.add(new PureHeuristicSearch());
         searchers.add(new Astar());
         searchers.add(new IterativeDeepeningAstar());
+        searchers.add(new BloomFilterSearch(1000,100));
 
         testSearchers(seconds,pancakes,searchers,heuristics);
     }
