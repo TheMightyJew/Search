@@ -12,22 +12,18 @@ import java.util.Stack;
 public class BloomFilterSearch extends BiDirectionalSearch {
     private int numberOfBits;
     private int stateSize;
-    private int counter;
+    private int numberOfIterations = 0;
 
     public BloomFilterSearch(int numberOfBits, int stateSize) {
         super(0.5);
         this.numberOfBits = numberOfBits;
         this.stateSize = stateSize;
-        this.counter = 0;
     }
 
     public Solution solveBiDirectional(Problem problem, int frontThreshold, int backThreshold) {
         Solution solution = null;
-        List<State> knownMidStates;
-        knownMidStates = getThresholdList(problem.getStartState(),problem.getGoalState(),frontThreshold,backThreshold);
-        // TODO: 9/16/2019  
-        State midState= null;
-        //midState = findMidState(problem.getGoalState(),problem.getStartState(),backThreshold,frontBloom);
+        State midState;
+        midState = getMidState(problem.getStartState(),problem.getGoalState(),frontThreshold,backThreshold);
         if(midState==null){
             return null;
         }
@@ -41,18 +37,20 @@ public class BloomFilterSearch extends BiDirectionalSearch {
         }
     }
 
-    private List<State> getThresholdList(State startState, State goalState, int frontThreshold,int backThreshold) {
+    private State getMidState(State startState, State goalState, int frontThreshold,int backThreshold) {
         // TODO: 15/09/2019 only for test
         //int expectedElements = (int)(numberOfBits * 0.9);//
         int expectedElements = 5;//
         BloomFilter bloomFilter = new BloomFilter(expectedElements,numberOfBits);
         List<State> knownMidStates = new ArrayList<>();
         boolean outOfSpace = false;
+        boolean listReady = false;
         boolean frontSearch = true;
+        State currentStartState;
+        State currentGoalState;
+        int threshold;
         do {
-            State currentStartState;
-            State currentGoalState;
-            int threshold;
+            //initiate for search
             if(frontSearch){
                 currentStartState = startState;
                 currentGoalState = goalState;
@@ -65,12 +63,19 @@ public class BloomFilterSearch extends BiDirectionalSearch {
             }
             SearchingState startSearchingState = new SearchingState(currentStartState,currentGoalState);
             Stack<SearchingState> stack = new Stack<>();
+            //search
             stack.push(startSearchingState);
             while (stack.empty()==false){
                 SearchingState current = stack.pop();
                 if(current.getG() == threshold){
-                    if(outOfSpace){// already use bloomfilter
+                    if(listReady){
+                        if(knownMidStates.contains(current.getState())){
+                            return current.getState();
+                        }
+                    }
+                    else if(outOfSpace){// already use bloomfilter
                         if(bloomFilter.isFull()){
+                            System.out.println("Number of bits is not enough for the bloomfilter");
                             return null;
                         }
                         else{
@@ -78,10 +83,11 @@ public class BloomFilterSearch extends BiDirectionalSearch {
                         }
                     }
                     else { // not yet using bloomfilter
-                        if((numberOfBits/stateSize)-1>knownMidStates.size()){
+                        if((numberOfBits/stateSize)-1 > knownMidStates.size()){
                             knownMidStates.add(current.getState());
                         }
                         else {
+                            outOfSpace = true;
                             for(State state:knownMidStates){
                                 bloomFilter.add(state);
                             }
@@ -96,32 +102,19 @@ public class BloomFilterSearch extends BiDirectionalSearch {
                     }
                 }
             }
-        }
-        while (outOfSpace = true);
-        return knownMidStates;
-    }
-
-    private State findMidState(State startState, State goalState, int Threshold, BloomFilter bloomFilter) {
-        SearchingState startSearchingState = new SearchingState(startState,goalState);
-        Stack<SearchingState> stack = new Stack<>();
-        stack.push(startSearchingState);
-        while (stack.empty()==false){
-            SearchingState current = stack.pop();
-            if(current.getG() == Threshold){
-                if(bloomFilter.contains(current.getState())){
-                    return current.getState();
+            numberOfIterations++;
+            frontSearch = !frontSearch;
+            if(outOfSpace==false){
+                if(listReady==true){
+                    return null;
                 }
-            }
-            else if(current.getG() < Threshold){
-                for(StatesMove statesMove:current.getState().getMoves()){
-                    SearchingState newState = new SearchingState(statesMove.getToState(),current.getGoalState(),current,current.getG()+statesMove.getCost());
-                    stack.add(newState);
+                else {
+                    listReady = true;
                 }
             }
         }
-        return null;
+        while (true);
     }
-
 
     @Override
     public String toString() {
