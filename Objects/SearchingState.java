@@ -54,8 +54,10 @@ public class SearchingState {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         SearchingState that = (SearchingState) o;
         return Objects.equals(state, that.state);
     }

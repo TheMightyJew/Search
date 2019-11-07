@@ -41,7 +41,7 @@ public class BloomFilterSearch extends BiDirectionalSearch {
         // TODO: 15/09/2019 only for test
         //int expectedElements = (int)(numberOfBits * 0.9);//
         int expectedElements = 5;//
-        BloomFilter bloomFilter = new BloomFilter(expectedElements,numberOfBits);
+        BitHashArray bloomFilter = new BitHashArray(startState.getRandomHashGenerator(),numberOfBits);
         List<State> knownMidStates = new ArrayList<>();
         boolean outOfSpace = false;
         boolean listReady = false;

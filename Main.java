@@ -26,8 +26,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int seconds = 10;
-        int pancakes = 6;
+        int seconds = 5;
+        int pancakes = 8;
         boolean heuristics = true;
         testAll(seconds,pancakes, heuristics);
 

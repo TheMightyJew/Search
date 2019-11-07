@@ -44,7 +44,8 @@ public abstract class BiDirectionalSearch extends BestFirstSearch {
                 else{
                     backThreshold += cheapestMove;
                 }
-                add2Front = !add2Front;            }
+                add2Front = !add2Front;
+            }
         }
     }
 

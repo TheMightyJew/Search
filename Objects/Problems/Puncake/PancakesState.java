@@ -1,9 +1,12 @@
 package Objects.Problems.Puncake;
 
+import Objects.Problems.RandomHashGenerator;
 import Objects.State;
 import Objects.StatesMove;
 
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class PancakesState extends State {
     private int[] pancakes;
@@ -156,8 +159,10 @@ public class PancakesState extends State {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         PancakesState that = (PancakesState) o;
         int i=0;
         for(int number:that.getPancakes()){
@@ -170,6 +175,55 @@ public class PancakesState extends State {
             return false;
         }
         return true;
+    }
+
+    public RandomHashGenerator getRandomHashGenerator(){
+        return new PancakeRandomHashGenerator(getSize());
+    }
+
+    private class PancakeRandomHashGenerator implements RandomHashGenerator {
+        private Set<Integer> set = new HashSet<>();
+
+        public PancakeRandomHashGenerator(int max) {
+            int num;
+            int constantMax = 17;
+            if(max>constantMax){
+                num=constantMax;
+                while (num>0){
+                    int random = (int)(Math.random()*max);
+                    if(set.contains(random)==false){
+                        set.add(random);
+                        num--;
+                    }
+                }
+            }
+            else{
+                for (int i=0;i<max;i++){
+                    set.add(i);
+                }
+            }
+        }
+
+        @Override
+        public long getHash(State state) {
+            if(state instanceof PancakesState == false)
+                return Integer.parseInt(null);
+            long hash=0;
+            int[] pancakes = ((PancakesState) state).getPancakes();
+            for(Integer num:set){
+                hash = hash*10 + pancakes[num];
+            }
+            return hash;
+        }
+
+        @Override
+        public String toString() {
+            String ans="";
+            for(Integer num:set){
+                ans+=num+" ";
+            }
+            return ans;
+        }
     }
 
 }

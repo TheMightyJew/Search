@@ -6,6 +6,7 @@ import Objects.SearchingState;
 import Objects.Solution;
 import Objects.State;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -19,8 +20,8 @@ public class MeetInTheMiddle extends BiDirectionalSearch {
 
     public Solution solveBiDirectional(Problem problem, int frontThreshold, int backThreshold) {
         Solution solution = null;
-        HashSet<SearchingState> frontSet = new HashSet<>();
-        HashSet<SearchingState> backSet = new HashSet<>();
+        ArrayList<SearchingState> frontSet = new ArrayList<>();
+        ArrayList<SearchingState> backSet = new ArrayList<>();
         //not concurrent
         /*frontSet = getThresholdList(problem.getStartState(),problem.getGoalState(),frontThreshold);
         backSet = getThresholdList(problem.getGoalState(),problem.getStartState(),backThreshold);*/
@@ -37,8 +38,9 @@ public class MeetInTheMiddle extends BiDirectionalSearch {
         for (SearchingState frontState:frontSet){
             if(backSet.contains(frontState)){
                 for (SearchingState backState:backSet){
-                    if(backState.hashCode()==frontState.hashCode()){
+                    if(backState.equals(frontState)){
                         solution = buildSolution(frontState,backState);
+                        return solution;
                     }
                 }
             }
@@ -88,13 +90,13 @@ public class MeetInTheMiddle extends BiDirectionalSearch {
 
     private class searchCallable extends Thread {
 
-        private HashSet<SearchingState> set;
+        private ArrayList<SearchingState> set;
         private Objects.State startState;
         private Objects.State goalState;
         private int threshold;
         private Semaphore semaphore;
 
-        public searchCallable(HashSet<SearchingState> set, Objects.State startState, Objects.State goalState, int threshold, Semaphore semaphore) {
+        public searchCallable(ArrayList<SearchingState> set, Objects.State startState, Objects.State goalState, int threshold, Semaphore semaphore) {
             this.set = set;
             this.startState = startState;
             this.goalState = goalState;
