@@ -11,10 +11,10 @@ import java.util.Stack;
 
 public class BloomFilterSearch extends BiDirectionalSearch {
     private int numberOfBits;
-    private int stateSize;
+    private final int stateSize;
     private int numberOfIterations = 0;
 
-    public BloomFilterSearch(int numberOfBits, int stateSize) {
+    public BloomFilterSearch(int numberOfBits,int stateSize) {
         super(0.5);
         this.numberOfBits = numberOfBits;
         this.stateSize = stateSize;
@@ -38,11 +38,9 @@ public class BloomFilterSearch extends BiDirectionalSearch {
     }
 
     private State getMidState(State startState, State goalState, int frontThreshold,int backThreshold) throws Exception {
-        // TODO: 15/09/2019 only for test
-        //int expectedElements = (int)(numberOfBits * 0.9);//
-        int expectedElements = 5;//
         BitHashArray bloomFilter = new BitHashArray(startState.getRandomHashGenerator(),numberOfBits);
         List<State> knownMidStates = new ArrayList<>();
+        boolean firstRun = true;
         boolean outOfSpace = false;
         boolean listReady = false;
         boolean frontSearch = true;
@@ -61,6 +59,7 @@ public class BloomFilterSearch extends BiDirectionalSearch {
                 currentGoalState = startState;
                 threshold = backThreshold;
             }
+            BitHashArray tempBloomFilter = null;
             SearchingState startSearchingState = new SearchingState(currentStartState,currentGoalState);
             Stack<SearchingState> stack = new Stack<>();
             //search
@@ -68,31 +67,35 @@ public class BloomFilterSearch extends BiDirectionalSearch {
             while (stack.empty()==false){
                 SearchingState current = stack.pop();
                 if(current.getG() == threshold){
-                    if(listReady){
-                        if(knownMidStates.contains(current.getState())){
+                    if(!listReady) {
+                        if(firstRun || bloomFilter.contains(current.getState())){
+                            if(!outOfSpace){// not using bloomfilter yet
+                                if(statesCapacity()-1 > knownMidStates.size()){
+                                    if(knownMidStates.contains(current.getState())==false){
+                                        knownMidStates.add(current.getState());
+                                    }
+                                }
+                                else {
+                                    outOfSpace = true;
+                                    tempBloomFilter = new BitHashArray(currentStartState.getRandomHashGenerator(),numberOfBits);
+                                    tempBloomFilter.add(current.getState());
+                                    for(State state:knownMidStates){
+                                        tempBloomFilter.add(state);
+                                    }
+                                    knownMidStates.clear();
+                                }
+                            }
+                            else { // already using bloomfilter
+                                tempBloomFilter.add(current.getState());
+                                if(tempBloomFilter.isFull()){
+                                    throw new Exception("Number of bits is not enough for the bloomfilter");
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        if (knownMidStates.contains(current.getState())) {
                             return current.getState();
-                        }
-                    }
-                    else if(outOfSpace){// already use bloomfilter
-                        if(bloomFilter.isFull()){
-                            throw new Exception("Number of bits is not enough for the bloomfilter");
-                        }
-                        else{
-                            bloomFilter.add(current.getState());
-                        }
-                    }
-                    else { // not yet using bloomfilter
-                        if((numberOfBits/stateSize)-1 > knownMidStates.size()){
-                            if(knownMidStates.contains(current.getState())==false){
-                                knownMidStates.add(current.getState());
-                            }
-                        }
-                        else {
-                            outOfSpace = true;
-                            for(State state:knownMidStates){
-                                bloomFilter.add(state);
-                            }
-                            knownMidStates.clear();
                         }
                     }
                 }
@@ -105,14 +108,19 @@ public class BloomFilterSearch extends BiDirectionalSearch {
             }
             numberOfIterations++;
             frontSearch = !frontSearch;
-            if(outOfSpace==false){
-                if(listReady==true){
-                    return null;
-                }
-                else {
+            if(listReady == true){
+                return null;
+            }
+            else{
+                if(outOfSpace == false){
                     listReady = true;
                 }
+                else{
+                    listReady = false;
+                }
             }
+            firstRun = false;
+
         }
         while (true);
     }
@@ -120,5 +128,9 @@ public class BloomFilterSearch extends BiDirectionalSearch {
     @Override
     public String toString() {
         return "BloomFilterSearch";
+    }
+
+    private int statesCapacity(){
+        return numberOfBits/stateSize;
     }
 }

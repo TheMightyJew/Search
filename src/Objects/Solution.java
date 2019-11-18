@@ -78,10 +78,10 @@ public class Solution extends Result {
     @Override
     public String toString() {
         return "Solution{" + "\n" +
-                "\t" + "solution= " + solToString() + ",\n" +
-                "\t" + "cost= " + cost + ",\n" +
-                "\t" + "time= " + time + " ms" + ",\n" +
-                "\t" + "solver= " + solver + "\n" +
+                "\t" + "Solution= " + solToString() + ",\n" +
+                "\t" + "Cost= " + cost + ",\n" +
+                "\t" + "Time= " + time + " ms" + ",\n" +
+                "\t" + "Solver= " + solver + "\n" +
                 '}';
     }
 

@@ -26,8 +26,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int seconds = 5;
-        int pancakes = 8;
+        int seconds = Integer.MAX_VALUE;
+        int pancakes = 10;
         boolean heuristics = true;
         testAll(seconds,pancakes, heuristics);
 
@@ -42,18 +42,19 @@ public class Main {
     }
 
     private static void testAll(int seconds, int pancakes, boolean heuristics) {
+        List<Searcher> searchers0 = new ArrayList<>();
         List<Searcher> searchers = new ArrayList<>();
 
-        searchers.add(new IterativeDeepeningDepthFirstSearch());
-        searchers.add(new BreadthFirstSearch());
-        searchers.add(new Dijkstra());
+        searchers0.add(new IterativeDeepeningDepthFirstSearch());
+        searchers0.add(new BreadthFirstSearch());
+        searchers0.add(new Dijkstra());
         searchers.add(new MeetInTheMiddle());
-        searchers.add(new FractionalMeetInTheMiddle(0.66));
-        searchers.add(new FractionalMeetInTheMiddle(0.33));
-        searchers.add(new PureHeuristicSearch());
-        searchers.add(new Astar());
-        searchers.add(new IterativeDeepeningAstar());
-        //searchers.add(new BloomFilterSearch(1000,100));
+        searchers0.add(new FractionalMeetInTheMiddle(0.66));
+        searchers0.add(new FractionalMeetInTheMiddle(0.33));
+        searchers0.add(new PureHeuristicSearch());
+        searchers0.add(new Astar());
+        searchers0.add(new IterativeDeepeningAstar());
+        searchers0.add(new BloomFilterSearch(1000,100));
 
         testSearchers(seconds,pancakes,searchers,heuristics);
     }
@@ -72,15 +73,11 @@ public class Main {
             try {
                 Solution solution = future.get(numberOfSeconds,TimeUnit.SECONDS);
                 results.add(solution);
-            } catch (TimeoutException e){
+            } catch (Exception e) {
                 int milliseconds = numberOfSeconds * 1000;
-                Failure failure = new Failure(milliseconds,searcher.toString());
+                Failure failure = new Failure(milliseconds, searcher.toString(), e.toString());
                 results.add(failure);
                 future.cancel(true);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
             }
         }
         service.shutdownNow();
@@ -95,9 +92,18 @@ public class Main {
             Date date = new Date();
             bufferedWriter.write(date.toString());
             for (Result result : solutions){
-                bufferedWriter.newLine();
-                bufferedWriter.newLine();
-                bufferedWriter.write(result.toString());
+                if(result instanceof Solution){
+                    bufferedWriter.newLine();
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(result.toString());
+                }
+            }
+            for (Result result : solutions){
+                if(result instanceof Failure){
+                    bufferedWriter.newLine();
+                    bufferedWriter.newLine();
+                    bufferedWriter.write(result.toString());
+                }
             }
             bufferedWriter.flush();
             bufferedWriter.close();
