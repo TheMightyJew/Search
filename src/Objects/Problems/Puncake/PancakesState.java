@@ -185,7 +185,7 @@ public class PancakesState extends State {
         private Set<Integer> set = new HashSet<>();
 
         public PancakeRandomHashGenerator(int max) {
-            int num;
+            /*int num;
             int constantMax = 17;
             if(max>constantMax){
                 num=constantMax;
@@ -201,6 +201,14 @@ public class PancakesState extends State {
                 for (int i=0;i<max;i++){
                     set.add(i);
                 }
+            }*/
+            int counter = 0;
+            while (counter < max * 0.6){
+                int random = (int)(Math.random()*max);
+                if(set.contains(random)==false){
+                    set.add(random);
+                    counter++;
+                }
             }
         }
 
@@ -208,12 +216,18 @@ public class PancakesState extends State {
         public long getHash(State state) {
             if(state instanceof PancakesState == false)
                 return Integer.parseInt(null);
-            long hash=0;
             int[] pancakes = ((PancakesState) state).getPancakes();
-            for(Integer num:set){
+            /*long hash=0;
+            for(int num:set){
                 hash = hash*10 + pancakes[num];
             }
-            return hash;
+            return hash;*/
+            String str = "";
+            for(int num:set){
+                str += pancakes[num];
+            }
+            int hash = str.hashCode();
+            return Math.abs(hash);
         }
 
         @Override

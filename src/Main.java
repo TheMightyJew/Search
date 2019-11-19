@@ -25,20 +25,19 @@ import java.util.concurrent.*;
 public class Main {
 
     public static void main(String[] args) {
-
-        int seconds = Integer.MAX_VALUE;
+        int seconds = 10;
         int pancakes = 10;
-        boolean heuristics = true;
+        boolean heuristics = false;
         testAll(seconds,pancakes, heuristics);
 
     }
 
-    private void testBloom(){
+    private static BloomFilterSearch getBloom(int numberOfBits){
         PancakesState pancakesState = new PancakesState(true,8);
         Problem problem = new Problem(pancakesState,pancakesState.getPerfectState());
         IterativeDeepeningAstar iterativeDeepeningAstar = new IterativeDeepeningAstar();
-        BloomFilterSearch bloomFilterSearch = new BloomFilterSearch((int)(Math.pow(10,6)),32*pancakesState.getSize());
-        System.out.println(bloomFilterSearch.solve(problem));
+        BloomFilterSearch bloomFilterSearch = new BloomFilterSearch(numberOfBits,32*pancakesState.getSize());
+        return bloomFilterSearch;
     }
 
     private static void testAll(int seconds, int pancakes, boolean heuristics) {
@@ -54,7 +53,7 @@ public class Main {
         searchers0.add(new PureHeuristicSearch());
         searchers0.add(new Astar());
         searchers0.add(new IterativeDeepeningAstar());
-        searchers0.add(new BloomFilterSearch(1000,100));
+        searchers.add(new BloomFilterSearch(1000,10));
 
         testSearchers(seconds,pancakes,searchers,heuristics);
     }

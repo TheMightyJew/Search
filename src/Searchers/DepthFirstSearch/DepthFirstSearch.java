@@ -9,7 +9,6 @@ public abstract class DepthFirstSearch extends Searcher {
 
     @Override
     public Solution solveNow(Problem problem) {
-        Solution solution = null;
         SearchingState startState = new SearchingState(problem.getStartState(),problem.getGoalState());
         State goalState = problem.getGoalState();
         Stack<SearchingState> stack = new Stack<>();
@@ -20,7 +19,7 @@ public abstract class DepthFirstSearch extends Searcher {
                 continue;
             }
             if(current.getState().equals(goalState)){
-                solution = new Solution(current,getTime(),toString());
+                Solution solution = new Solution(current,getTime(),toString());
                 return solution;
             }
             for(StatesMove statesMove:current.getState().getMoves()){
@@ -28,7 +27,7 @@ public abstract class DepthFirstSearch extends Searcher {
                 stack.add(newState);
             }
         }
-        return solution;
+        return null;
     }
 
     public boolean keepSearching(SearchingState searchingState){

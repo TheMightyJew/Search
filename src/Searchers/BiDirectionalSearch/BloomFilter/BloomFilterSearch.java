@@ -24,7 +24,7 @@ public class BloomFilterSearch extends BiDirectionalSearch {
         Solution solution = null;
         State midState;
         midState = getMidState(problem.getStartState(),problem.getGoalState(),frontThreshold,backThreshold);
-        if(midState==null){
+        if(midState == null){
             return null;
         }
         else {
@@ -38,7 +38,7 @@ public class BloomFilterSearch extends BiDirectionalSearch {
     }
 
     private State getMidState(State startState, State goalState, int frontThreshold,int backThreshold) throws Exception {
-        BitHashArray bloomFilter = new BitHashArray(startState.getRandomHashGenerator(),numberOfBits);
+        BitHashArray bloomFilter = null;
         List<State> knownMidStates = new ArrayList<>();
         boolean firstRun = true;
         boolean outOfSpace = false;
@@ -48,6 +48,7 @@ public class BloomFilterSearch extends BiDirectionalSearch {
         State currentGoalState;
         int threshold;
         do {
+            System.out.println("iteration: " + numberOfIterations);
             //initiate for search
             if(frontSearch){
                 currentStartState = startState;
@@ -95,6 +96,7 @@ public class BloomFilterSearch extends BiDirectionalSearch {
                     }
                     else{
                         if (knownMidStates.contains(current.getState())) {
+                            System.out.println(numberOfIterations+ " iterations");
                             return current.getState();
                         }
                     }
@@ -119,11 +121,18 @@ public class BloomFilterSearch extends BiDirectionalSearch {
                     listReady = false;
                 }
             }
+            if(tempBloomFilter != null){
+                System.out.println(tempBloomFilter.getArray().cardinality());
+                bloomFilter = new BitHashArray(tempBloomFilter);
+                System.out.println(bloomFilter.getArray().cardinality());
+            }
             firstRun = false;
-
+            outOfSpace = false;
+            numberOfIterations++;
         }
         while (true);
     }
+
 
     @Override
     public String toString() {

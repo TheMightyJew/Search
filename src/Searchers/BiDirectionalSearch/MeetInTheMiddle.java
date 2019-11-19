@@ -23,9 +23,9 @@ public class MeetInTheMiddle extends BiDirectionalSearch {
         ArrayList<SearchingState> frontSet = new ArrayList<>();
         ArrayList<SearchingState> backSet = new ArrayList<>();
         //not concurrent
-        /*frontSet = getThresholdList(problem.getStartState(),problem.getGoalState(),frontThreshold);
-        backSet = getThresholdList(problem.getGoalState(),problem.getStartState(),backThreshold);*/
-        Semaphore semaphore = new Semaphore(0);
+        frontSet.addAll(getThresholdList(problem.getStartState(),problem.getGoalState(),frontThreshold));
+        backSet.addAll(getThresholdList(problem.getGoalState(),problem.getStartState(),backThreshold));
+        /*Semaphore semaphore = new Semaphore(0);
         try {
             searchCallable frontSearch = new searchCallable(frontSet,problem.getStartState(),problem.getGoalState(),frontThreshold,semaphore);
             frontSearch.start();
@@ -34,7 +34,7 @@ public class MeetInTheMiddle extends BiDirectionalSearch {
             semaphore.acquire(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
         for (SearchingState frontState:frontSet){
             if(backSet.contains(frontState)){
                 for (SearchingState backState:backSet){
@@ -49,13 +49,13 @@ public class MeetInTheMiddle extends BiDirectionalSearch {
     }
 
     private HashSet<SearchingState> getThresholdList(State startState, State goalState, int Threshold) {
-        Queue<SearchingState> openList = new PriorityQueue<>(new Gcomparator());
+        Queue<SearchingState> openListQ = new PriorityQueue<>(new Gcomparator());
         HashSet<SearchingState> thresholdList = new HashSet<>();
         HashSet<State> closeList = new HashSet<>();
         SearchingState startSearchingState = new SearchingState(startState,goalState);
-        openList.add(startSearchingState);
-        while (openList.isEmpty()==false){
-            SearchingState current = openList.poll();
+        openListQ.add(startSearchingState);
+        while (openListQ.isEmpty()==false){
+            SearchingState current = openListQ.poll();
             if(closeList.contains(current.getState())){
                 continue;
             }
@@ -68,7 +68,7 @@ public class MeetInTheMiddle extends BiDirectionalSearch {
             else if(current.getG() == Threshold){
                 thresholdList.add(current);
             }
-            addNeighbors(current,closeList,openList);
+            addNeighbors(current,closeList,openListQ);
         }
         return thresholdList;
     }
