@@ -21,6 +21,7 @@ public class BitHashArray {
     }
 
     public boolean contains(State state){
+        Object object =  array.get(getID(state));
         boolean contains = array.get(getID(state));
         return contains;
     }

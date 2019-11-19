@@ -25,11 +25,10 @@ import java.util.concurrent.*;
 public class Main {
 
     public static void main(String[] args) {
-        int seconds = 10;
-        int pancakes = 10;
+        int seconds = Integer.MAX_VALUE;
+        int pancakes = 8;
         boolean heuristics = false;
         testAll(seconds,pancakes, heuristics);
-
     }
 
     private static BloomFilterSearch getBloom(int numberOfBits){
@@ -52,8 +51,10 @@ public class Main {
         searchers0.add(new FractionalMeetInTheMiddle(0.33));
         searchers0.add(new PureHeuristicSearch());
         searchers0.add(new Astar());
-        searchers0.add(new IterativeDeepeningAstar());
-        searchers.add(new BloomFilterSearch(1000,10));
+        searchers.add(new IterativeDeepeningAstar());
+        int intSize = 32;
+        int memory = (int)(Math.pow(10,6));
+        searchers.add(new BloomFilterSearch(memory,intSize*pancakes));
 
         testSearchers(seconds,pancakes,searchers,heuristics);
     }
@@ -61,6 +62,7 @@ public class Main {
 
     private static void testSearchers(int numberOfSeconds, int numberOfPancakes, List<Searcher> searchers, boolean heuristics){
         PancakesState pancakesState = new PancakesState(heuristics,numberOfPancakes);
+        //PancakesState pancakesState = new PancakesState(false, new int[]{3, 2, 4, 1, 5, 6, 8, 7});
         Problem problem = new Problem(pancakesState,pancakesState.getPerfectState());
         ExecutorService service = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                 numberOfSeconds, TimeUnit.SECONDS,

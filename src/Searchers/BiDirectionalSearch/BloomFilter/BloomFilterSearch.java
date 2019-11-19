@@ -48,7 +48,6 @@ public class BloomFilterSearch extends BiDirectionalSearch {
         State currentGoalState;
         int threshold;
         do {
-            System.out.println("iteration: " + numberOfIterations);
             //initiate for search
             if(frontSearch){
                 currentStartState = startState;
@@ -61,8 +60,8 @@ public class BloomFilterSearch extends BiDirectionalSearch {
                 threshold = backThreshold;
             }
             BitHashArray tempBloomFilter = null;
-            SearchingState startSearchingState = new SearchingState(currentStartState,currentGoalState);
             Stack<SearchingState> stack = new Stack<>();
+            SearchingState startSearchingState = new SearchingState(currentStartState,currentGoalState);
             //search
             stack.push(startSearchingState);
             while (stack.empty()==false){
@@ -96,7 +95,6 @@ public class BloomFilterSearch extends BiDirectionalSearch {
                     }
                     else{
                         if (knownMidStates.contains(current.getState())) {
-                            System.out.println(numberOfIterations+ " iterations");
                             return current.getState();
                         }
                     }
@@ -122,13 +120,10 @@ public class BloomFilterSearch extends BiDirectionalSearch {
                 }
             }
             if(tempBloomFilter != null){
-                System.out.println(tempBloomFilter.getArray().cardinality());
                 bloomFilter = new BitHashArray(tempBloomFilter);
-                System.out.println(bloomFilter.getArray().cardinality());
             }
             firstRun = false;
             outOfSpace = false;
-            numberOfIterations++;
         }
         while (true);
     }
