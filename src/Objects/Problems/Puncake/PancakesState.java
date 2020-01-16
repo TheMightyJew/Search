@@ -4,16 +4,14 @@ import Objects.Problems.RandomHashGenerator;
 import Objects.State;
 import Objects.StatesMove;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 public class PancakesState extends State {
     private int[] pancakes;
 
     public PancakesState(boolean heuristics) {
         super(heuristics);
-        randomPuncakes(10);
+        randomPancakes(10);
     }
 
     public PancakesState(boolean heuristics,int[] pancakes) {
@@ -28,7 +26,7 @@ public class PancakesState extends State {
                 throw new Exception("Number of pancakes has to be at list 1");
             }
             else{
-                randomPuncakes(numberOfPancakes);
+                randomPancakes(numberOfPancakes);
             }
         }
         catch (Exception e){
@@ -44,28 +42,24 @@ public class PancakesState extends State {
         return ans;
     }
 
-    private void randomPuncakes(int numberOfPancakes){
+    // TODO: 13-Jan-20 need to test
+    private void randomPancakes(int numberOfPancakes){
         resetPancakes(numberOfPancakes);
-        for(int i=numberOfPancakes;i>0;i--){
-            int random = (int)(Math.random()*i);
-            for(int j=0;j<pancakes.length;j++){
-                if(pancakes[j]==0){
-                    if(random==0){
-                        pancakes[j]=i;
-                        break;
-                    }
-                    else{
-                        random--;
-                    }
-                }
-            }
+        List<Integer> list= new ArrayList<>();
+        for(int i=0;i<numberOfPancakes;i++){
+            list.add(i);
+        }
+        for(int i=numberOfPancakes-1;i>=0;i--){
+            int index = (int)(Math.random()*list.size());
+            pancakes[i] = list.get(index);
+            list.remove(index);
         }
     }
 
     private void resetPancakes(int numberOfPancakes) {
         pancakes = new int[numberOfPancakes];
         for(int i=0;i<pancakes.length;i++){
-            pancakes[i]=0;
+            pancakes[i]=-1;
         }
     }
 
@@ -77,19 +71,19 @@ public class PancakesState extends State {
                 throw new Exception("Cant compute heuristic to a different state.");
             }
             else {
-                PancakesState otherPuncakes = ((PancakesState)state);
-                if(getSize()!=otherPuncakes.getSize()){
+                PancakesState otherPancakes = ((PancakesState)state);
+                if(getSize()!=otherPancakes.getSize()){
                     throw new Exception("The Puncakes States are of a different problem.");
                 }
                 else{
-                    // TODO: 01-Aug-19 generic heuristic that uses otherPuncakes
+                    // TODO: 01-Aug-19 generic heuristic that uses otherPancakes
                     int i=0;
                     for(i=0;i<pancakes.length-1;i++){
                         if(Math.abs(pancakes[i+1]-pancakes[i])>1){
                             heuristic++;
                         }
                     }
-                    if(pancakes[i]!=pancakes.length){
+                    if(pancakes[i] != pancakes.length-1){
                         heuristic++;
                     }
                     return heuristic;
@@ -148,7 +142,7 @@ public class PancakesState extends State {
     public PancakesState getPerfectState(){
         int[] array = new int[pancakes.length];
         for(int i=0;i<array.length;i++){
-            array[i]=i+1;
+            array[i]=i;
         }
         return new PancakesState(this.heuristics,array);
     }

@@ -26,8 +26,8 @@ public class Main {
 
     public static void main(String[] args) {
         int seconds = Integer.MAX_VALUE;
-        int pancakes = 8;
-        boolean heuristics = false;
+        int pancakes = 40;
+        boolean heuristics = true;
         testAll(seconds,pancakes, heuristics);
     }
 
@@ -46,7 +46,7 @@ public class Main {
         searchers0.add(new IterativeDeepeningDepthFirstSearch());
         searchers0.add(new BreadthFirstSearch());
         searchers0.add(new Dijkstra());
-        searchers.add(new MeetInTheMiddle());
+        searchers0.add(new MeetInTheMiddle());
         searchers0.add(new FractionalMeetInTheMiddle(0.66));
         searchers0.add(new FractionalMeetInTheMiddle(0.33));
         searchers0.add(new PureHeuristicSearch());
@@ -54,7 +54,7 @@ public class Main {
         searchers.add(new IterativeDeepeningAstar());
         int intSize = 32;
         int memory = (int)(Math.pow(10,6));
-        searchers.add(new BloomFilterSearch(memory,intSize*pancakes));
+        searchers0.add(new BloomFilterSearch(memory,intSize*pancakes));
 
         testSearchers(seconds,pancakes,searchers,heuristics);
     }
@@ -62,7 +62,7 @@ public class Main {
 
     private static void testSearchers(int numberOfSeconds, int numberOfPancakes, List<Searcher> searchers, boolean heuristics){
         PancakesState pancakesState = new PancakesState(heuristics,numberOfPancakes);
-        //PancakesState pancakesState = new PancakesState(false, new int[]{3, 2, 4, 1, 5, 6, 8, 7});
+        //PancakesState pancakesState = new PancakesState(heuristics, new int[]{15, 14, 13, 12, 6, 7, 8, 10, 9, 11, 0, 1, 2, 3, 4, 5});
         Problem problem = new Problem(pancakesState,pancakesState.getPerfectState());
         ExecutorService service = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                 numberOfSeconds, TimeUnit.SECONDS,
